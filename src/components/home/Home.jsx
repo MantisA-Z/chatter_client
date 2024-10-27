@@ -9,7 +9,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 
 const Home = () => {
   const socket = UseSocketContext();
-  const [openNewGroupAccordian, setOpenNewGroupAccordian] = useState(false);
+  const [openNewGroupAccordion, setOpenNewGroupAccordion] = useState(false);
   const [groups, setGroups] = useState([]);
   const handleNewGroup = () => {
     setOpenNewGroupAccordion((b) => !b);
