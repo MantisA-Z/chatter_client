@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Signup from "./components/Signup/Signup";
+import Signin from "./components/signin/Signin";
+import { FetchContextProvider } from "./contexts/FetchContext";
+import { SocketContextProvider } from "./contexts/SocketContext";
+import Home from "./components/home/Home";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SocketContextProvider>
+      <FetchContextProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Signup />} />
+            <Route path="/signin" element={<Signin />}></Route>
+            <Route path="/home" element={<Home />}></Route>
+          </Routes>
+        </Router>
+      </FetchContextProvider>
+    </SocketContextProvider>
   );
 }
 

@@ -1,0 +1,195 @@
+@import url("https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap");
+:root {
+  --background-color-signup-container: black;
+  --background-color-container-form: white;
+  --background-color-signup-form: hsl(135, 58%, 45%);
+  --loader-color: lime;
+  --button-color: white;
+}
+
+.signup-container {
+  position: relative;
+  z-index: 0;
+  height: 100vh;
+  background-color: var(--background-color-signup-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-family: Inter;
+  font-family: "Rethink Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.signup-container .background {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  object-fit: cover;
+}
+
+.form-container {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  display: flex;
+  border-radius: 23px;
+}
+
+.form-container form {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  background-color: var(--background-color-container-form);
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 23px 0 0 23px;
+
+  & button {
+    width: 80px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    font-size: 18px;
+    background-color: var(--background-color-signup-form);
+    color: var(--button-color);
+  }
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+
+  & input {
+    border: none;
+    border: 3px solid var(--background-color-signup-form);
+    border-radius: 4px;
+    outline: none;
+  }
+
+  & input::placeholder {
+    color: orange;
+  }
+}
+
+.signup-form {
+  width: 250px;
+  height: 300px;
+  background-color: var(--background-color-signup-form);
+  border-radius: 0 23px 23px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+
+  & svg {
+    color: var(--background-color-container-form);
+    font-size: 2rem;
+  }
+}
+
+.signup-form .info {
+  margin: 0;
+  padding: 0;
+}
+
+.signup-form .info {
+  margin: 0;
+  padding: 0;
+}
+
+.signup-form .info h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  color: var(--button-color);
+}
+
+.signup-container .chatIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.signup-form .chatIcon h2 {
+  color: var(--button-color);
+  font-size: 2rem;
+  padding: 0;
+  margin: 0;
+}
+
+.signup-form .chatIcon svg {
+  font-size: 4rem;
+}
+
+.signup-container .loginIcon {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  & svg {
+    color: var(--background-color-signup-form);
+    background-color: white;
+    border-radius: 12px;
+    padding: 5px;
+  }
+}
+
+.signup-container .loginIcon h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  text-align: center;
+  color: var(--button-color);
+}
+
+.loader-container {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  display: grid;
+  place-content: center;
+  z-index: 1;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.loader {
+  width: 4rem;
+  height: 4rem;
+  border: 0.6rem solid var(--loader-color);
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: loader 1s ease-in-out alternate infinite;
+}
+
+.show {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hidden {
+  opacity: 0;
+  z-index: -1;
+}
+
+@keyframes loader {
+  to {
+    transform: rotate(1turn);
+    scale: 1.2;
+  }
+}
