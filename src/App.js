@@ -12,9 +12,9 @@ function App() {
       <FetchContextProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Signup />} />
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin />}></Route>
-            <Route path="/home" element={<Home />}></Route>
           </Routes>
         </Router>
       </FetchContextProvider>

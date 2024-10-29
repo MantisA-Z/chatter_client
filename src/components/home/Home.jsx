@@ -15,18 +15,24 @@ const Home = () => {
     setOpenNewGroupAccordion((b) => !b);
   };
 
+  const handleCloseNewGroup = () => {
+    setOpenNewGroupAccordion(false);
+  };
+
   return (
     <div className="home-container">
       <div className="groups">
-        <div className="group new-group" onClick={handleNewGroup}>
-          <NewGroupIcon />
-          <div className="name">New Group</div>
+        <div className="group new-group">
+          <div className="start" onClick={handleNewGroup}>
+            <NewGroupIcon />
+            <div className="name">Group</div>
+          </div>
           <div
             className={
               openNewGroupAccordion ? "accordion show" : "accordion hidden"
             }
           >
-            <div className="options">
+            <div className="options" onClick={handleCloseNewGroup}>
               <CloseIcon />
             </div>
             <h2>New Room</h2>
