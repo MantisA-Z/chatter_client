@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./home.css";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
 import { MdOutlineChatBubble as ChatIcon } from "react-icons/md";
@@ -10,6 +10,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 const Home = () => {
   const socket = UseSocketContext();
   const [openNewGroupAccordion, setOpenNewGroupAccordion] = useState(false);
+  const [connectionId, setConnectionId] = useState(null);
   const [groups, setGroups] = useState([]);
   const handleNewGroup = () => {
     setOpenNewGroupAccordion((b) => !b);
@@ -18,6 +19,20 @@ const Home = () => {
   const handleCloseNewGroup = () => {
     setOpenNewGroupAccordion(false);
   };
+
+  useEffect(() => {
+    if (!socket) return;
+    const token = localStorage.getItem("token");
+
+    //emits
+    socket.emit("user:connection-id", { token });
+
+    //listeners
+    socket.on("server:user-connectionId", ({ connectionId }) => {
+      setConnectionId(connectionId);
+      console.log(connectionId);
+    });
+  }, [socket]);
 
   return (
     <div className="home-container">
@@ -39,6 +54,9 @@ const Home = () => {
             <form>
               <label htmlFor="name">Room Name</label>
               <input id="name" type="text" />
+              <button className="createRoom" type="submit">
+                Create
+              </button>
             </form>
           </div>
         </div>
