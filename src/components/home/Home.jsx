@@ -11,6 +11,7 @@ const Home = () => {
   const socket = UseSocketContext();
   const [openNewGroupAccordion, setOpenNewGroupAccordion] = useState(false);
   const [connectionId, setConnectionId] = useState(null);
+  const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
   const handleNewGroup = () => {
     setOpenNewGroupAccordion((b) => !b);
@@ -34,6 +35,30 @@ const Home = () => {
     });
   }, [socket]);
 
+  const updateNewRoomName = (e) => {
+    setNewRoomName(e.target.value);
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("server:created-new-room", ({ name: roomName }) => {
+      setGroups((g) => [...g, { name: roomName }]);
+    });
+
+    return () => {
+      socket.off("server:created-new-room");
+    };
+  }, [connectionId, socket]);
+
+  const createNewRoom = (e) => {
+    e.preventDefault();
+    if (newRoomName === "" || connectionId === null) return;
+
+    socket.emit("user:create-new-room", { name: newRoomName, connectionId });
+    console.log(newRoomName);
+  };
+
   return (
     <div className="home-container">
       <div className="groups">
@@ -53,8 +78,12 @@ const Home = () => {
             <h2>New Room</h2>
             <form>
               <label htmlFor="name">Room Name</label>
-              <input id="name" type="text" />
-              <button className="createRoom" type="submit">
+              <input onChange={updateNewRoomName} id="name" type="text" />
+              <button
+                onClick={createNewRoom}
+                className="createRoom"
+                type="submit"
+              >
                 Create
               </button>
             </form>
@@ -63,7 +92,7 @@ const Home = () => {
         {groups.map((val, i) => {
           <div className="group" key={i}>
             <div className="log">
-              <img src={val.src} alt="" />
+              {val?.src ? <img src={val.src} alt="" /> : ""}
             </div>
             <div className="name">{val.name}</div>
           </div>;
