@@ -6,6 +6,7 @@ import { IoPersonAdd as AddFriendIcon } from "react-icons/io5";
 import { MdOutlineGroupAdd as NewGroupIcon } from "react-icons/md";
 import { UseSocketContext } from "../../contexts/SocketContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
+import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 
 const Home = () => {
   const socket = UseSocketContext();
@@ -75,8 +76,13 @@ const Home = () => {
             <div className="options" onClick={handleCloseNewGroup}>
               <CloseIcon />
             </div>
-            <h2>New Room</h2>
             <form>
+              <div className="logo">
+                <label htmlFor="image">
+                  <AddImageIcon />
+                </label>
+                <input id="image" type="file" accept="image/*" />
+              </div>
               <label htmlFor="name">Room Name</label>
               <input onChange={updateNewRoomName} id="name" type="text" />
               <button
