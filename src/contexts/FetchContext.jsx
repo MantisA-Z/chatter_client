@@ -11,11 +11,14 @@ const FetchContextProvider = ({ children }) => {
         headers: {
           ...headers,
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
         },
         body,
         method,
       };
+      if (!(body instanceof FormData)) {
+        options.headers["Content-Type"] = "application/json";
+      }
+
       const response = await fetch(url, options);
 
       const data = await response.json();
