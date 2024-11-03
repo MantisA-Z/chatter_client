@@ -24,7 +24,7 @@ const FetchContextProvider = ({ children }) => {
       const data = await response.json();
       return { data, status: response.status };
     } catch (err) {
-      throw err;
+      console.log(err);
     }
   };
   return (

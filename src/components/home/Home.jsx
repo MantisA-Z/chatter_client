@@ -17,6 +17,7 @@ const Home = () => {
   const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
   const [logoFile, setLogoFile] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(0);
   const sendReq = useFetchContext();
 
   useEffect(() => {
@@ -50,6 +51,10 @@ const Home = () => {
     };
   }, [connectionId, socket]);
 
+  const handleGroupSelection = (e) => {
+    setSelectedGroup(e.target.key);
+  };
+
   const handleNewGroup = () => {
     setOpenNewGroupAccordion((b) => !b);
   };
@@ -76,16 +81,28 @@ const Home = () => {
     if (newRoomName === "" || connectionId === null) return;
 
     try {
-      const { data, status } = await sendReq(
+      const response = await sendReq(
         "http://127.0.0.1:8000/upload",
         {},
         JSON.stringify({ file: logoFile })
       );
 
+      if (!response || !response.data) {
+        console.log("Server did not responded");
+        return;
+      }
+
+      const { data, status } = response;
+
       if (status === 422) {
         console.log("Not enough info");
+        return;
       } else if (status === 500) {
         console.log("Internal server error");
+        return;
+      } else if (status !== 200) {
+        console.log("something went wrong while fetching user data");
+        return;
       }
 
       socket.emit("user:create-new-room", {
@@ -145,7 +162,7 @@ const Home = () => {
           </div>
         </div>
         {groups.map((val, i) => (
-          <div className="group" key={i}>
+          <div className="group" key={i} onClick={handleGroupSelection}>
             <div className="logo">
               {val?.src ? (
                 <img src={val.src} alt="" />
@@ -163,7 +180,17 @@ const Home = () => {
         <SettingsIcon />
       </div>
       <div className="chat-container">
-        <div className="chat"></div>
+        <div className="chats">
+          {groups[selectedGroup]?.map((val, i) => (
+            <div className="chat">
+              <div className="cred">
+                <div className="from">{val.from}</div>
+                <div className="time">{val.createdAt}</div>
+              </div>
+              <div className="mg">{val.msg}</div>
+            </div>
+          ))}
+        </div>
         <div className="inputs">
           <input type="text" placeholder="..." />
         </div>

@@ -26,7 +26,12 @@ const VerifyContextProvider = ({ children }) => {
         console.log("token");
         navigate("/signin");
       } else {
-        const { data, status } = await sendReq("http://127.0.0.1:8000/api");
+        const response = await sendReq("http://127.0.0.1:8000/api");
+        if (!response || !response.data) {
+          console.log("Server did not responded at /api");
+          return;
+        }
+        const { data, status } = response;
         if (status === 401) {
           navigate("/signin"); // Redirect if the token is invalid
         }
