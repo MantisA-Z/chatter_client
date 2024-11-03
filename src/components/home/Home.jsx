@@ -45,7 +45,7 @@ const Home = () => {
     socket.on(
       "server:created-new-room",
       ({ name, logoImgUrl, groupInstance }) => {
-        setGroups((g) => [...g, { name, src: logoImgUrl, groupInstance }]);
+        setGroups((g) => [...g, { name, logo: logoImgUrl, groupInstance }]);
       }
     );
 
@@ -218,8 +218,8 @@ const Home = () => {
             onClick={() => handleGroupSelection(i)}
           >
             <div className="logo">
-              {val?.src ? (
-                <img src={val.src} alt="" />
+              {val?.logo ? (
+                <img src={val.logo} alt="" />
               ) : (
                 <img src="/defaultGroupLogo.jpg"></img>
               )}
