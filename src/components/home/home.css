@@ -83,6 +83,15 @@
   color: var(--input-color);
 }
 
+.inputs button {
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 1.6rem;
+  position: relative;
+  top: 3px;
+}
+
 .groups {
   height: 100vh;
   width: 10%;

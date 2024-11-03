@@ -8,6 +8,7 @@ import { MdOutlineGroupAdd as NewGroupIcon } from "react-icons/md";
 import { UseSocketContext } from "../../contexts/SocketContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
+import { LuSendHorizonal as SendIcon } from "react-icons/lu";
 
 const Home = () => {
   const socket = UseSocketContext();
@@ -17,7 +18,10 @@ const Home = () => {
   const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
   const [logoFile, setLogoFile] = useState(null);
-  const [selectedGroup, setSelectedGroup] = useState(0);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const currentGroup = groups[selectedGroup] || null;
+  console.log(currentGroup);
+  const [userMsg, setUserMsg] = useState("");
   const sendReq = useFetchContext();
 
   useEffect(() => {
@@ -45,14 +49,53 @@ const Home = () => {
       }
     );
 
+    socket.on("server:room-msg", ({ msg, from, groupId }) => {
+      console.log("called");
+      function formatDate(date) {
+        const options = { month: "2-digit", day: "2-digit", year: "numeric" };
+        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+          date
+        );
+
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? "PM" : "AM";
+
+        hours = hours % 12;
+        hours = hours === 0 ? 12 : hours;
+
+        const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+        return `${formattedDate} ${hours}:${formattedMinutes} ${ampm}`;
+      }
+
+      const now = new Date();
+      const createdAt = formatDate(now);
+
+      // Find the target room by ID
+      const targetRoomIndex = groups.findIndex((val) => val._id === groupId);
+      if (targetRoomIndex === -1) return; // If no room is found, exit
+
+      // Update the groups state
+      setGroups((prevG) =>
+        prevG.map((group, i) =>
+          i === targetRoomIndex
+            ? { ...group, chat: [...group.chat, { from, msg, createdAt }] }
+            : group
+        )
+      );
+    });
+
     return () => {
       socket.off("server:user-connectionId");
       socket.off("server:created-new-room");
+      socket.off("server:user-msg");
     };
   }, [connectionId, socket]);
 
-  const handleGroupSelection = (e) => {
-    setSelectedGroup(e.target.key);
+  const handleGroupSelection = (i) => {
+    setSelectedGroup(i);
+    console.log(groups, i);
   };
 
   const handleNewGroup = () => {
@@ -61,6 +104,13 @@ const Home = () => {
 
   const handleCloseNewGroup = () => {
     setOpenNewGroupAccordion(false);
+  };
+
+  const handleSendMsg = () => {
+    if (userMsg.trim() === "" || groups.length === 0 || currentGroup === null)
+      return;
+    const groupId = currentGroup._id;
+    socket.emit("user:msg", { connectionId, groupId, msg: userMsg });
   };
 
   const changeNewLogo = (e) => {
@@ -162,7 +212,11 @@ const Home = () => {
           </div>
         </div>
         {groups.map((val, i) => (
-          <div className="group" key={i} onClick={handleGroupSelection}>
+          <div
+            className="group"
+            key={i}
+            onClick={() => handleGroupSelection(i)}
+          >
             <div className="logo">
               {val?.src ? (
                 <img src={val.src} alt="" />
@@ -181,18 +235,28 @@ const Home = () => {
       </div>
       <div className="chat-container">
         <div className="chats">
-          {groups[selectedGroup]?.map((val, i) => (
-            <div className="chat">
-              <div className="cred">
-                <div className="from">{val.from}</div>
-                <div className="time">{val.createdAt}</div>
-              </div>
-              <div className="mg">{val.msg}</div>
-            </div>
-          ))}
+          {currentGroup !== null
+            ? currentGroup.chat.map((message, index) => (
+                <div className="chat" key={index}>
+                  <div className="cred">
+                    <div className="from">{message.from}</div>
+                    <div className="time">{message.createdAt}</div>
+                  </div>
+                  <div className="mg">{message.msg}</div>
+                </div>
+              ))
+            : ""}
         </div>
         <div className="inputs">
-          <input type="text" placeholder="..." />
+          <input
+            type="text"
+            placeholder="..."
+            value={userMsg}
+            onChange={(e) => setUserMsg(e.target.value)}
+          />
+          <button onClick={handleSendMsg}>
+            <SendIcon />
+          </button>
         </div>
       </div>
     </div>
