@@ -19,6 +19,7 @@ const Home = () => {
   const [groups, setGroups] = useState([]);
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [loader, setLoader] = useState(false);
   const currentGroup = groups[selectedGroup] || null;
   console.log(currentGroup);
   const [userMsg, setUserMsg] = useState("");
@@ -42,12 +43,9 @@ const Home = () => {
       console.log(connectionId);
     });
 
-    socket.on(
-      "server:created-new-room",
-      ({ name, logoImgUrl, groupInstance }) => {
-        setGroups((g) => [...g, { name, logo: logoImgUrl, groupInstance }]);
-      }
-    );
+    socket.on("server:created-new-room", ({ groupInstance }) => {
+      setGroups((g) => [...g, groupInstance]);
+    });
 
     socket.on("server:room-msg", ({ msg, from, groupId }) => {
       console.log("called");
@@ -129,6 +127,7 @@ const Home = () => {
   const createNewRoom = async (e) => {
     e.preventDefault();
     if (newRoomName === "" || connectionId === null) return;
+    setLoader(true);
 
     try {
       const response = await sendReq(
@@ -160,8 +159,11 @@ const Home = () => {
         connectionId,
         logoImgUrl: data.fileUrl,
       });
+
+      setLoader(false);
     } catch (err) {
       console.log(err);
+      setLoader(false);
       return;
     }
   };
@@ -172,6 +174,11 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      <div
+        className={loader ? "loader-container show" : "loader-container hidden"}
+      >
+        <div className="loader"></div>
+      </div>
       <div className="groups">
         <div className="group new-group">
           <div className="start" onClick={handleNewGroup}>

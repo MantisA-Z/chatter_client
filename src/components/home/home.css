@@ -15,6 +15,29 @@
   min-width: 830px;
 }
 
+.home-container .loader-container {
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  display: grid;
+  place-content: center;
+  z-index: 3;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.home-container .loader-container .loader {
+  width: 100%;
+  inset: 0;
+  width: 4rem;
+  height: 4rem;
+  border: 0.6rem solid lime;
+  border-radius: 50%;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: loader 0.8s ease-in-out alternate infinite;
+}
+
 .chat-container {
   position: absolute;
   bottom: 0;
@@ -255,6 +278,7 @@
 }
 
 .hidden {
+  z-index: -2 !important;
   opacity: 0%;
 }
 
@@ -289,5 +313,11 @@
 @media screen and (max-width: 1400px) {
   .groups .group .name {
     display: none;
+  }
+}
+
+@keyframes loader {
+  to {
+    transform: scale(1.2) rotate(1turn);
   }
 }
