@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./home.css";
 import { useFetchContext } from "../../contexts/FetchContext";
 import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
@@ -17,6 +17,7 @@ const Home = () => {
   const [connectionId, setConnectionId] = useState(null);
   const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
+  const invisDivRef = useRef(null);
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -91,6 +92,20 @@ const Home = () => {
     };
   }, [connectionId, socket]);
 
+  useEffect(() => {
+    if (currentGroup?.chat.length) {
+      invisDivRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [currentGroup?.chat.length]);
+
+  useEffect(() => {
+    if (!invisDivRef.current) return;
+    invisDivRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }, [groups]); // Adding `groups` to watch all updates
+
   const handleGroupSelection = (i) => {
     setSelectedGroup(i);
     console.log(groups, i);
@@ -98,6 +113,7 @@ const Home = () => {
 
   const handleNewGroup = () => {
     setOpenNewGroupAccordion((b) => !b);
+    console.log(openNewGroupAccordion);
   };
 
   const handleCloseNewGroup = () => {
@@ -109,6 +125,7 @@ const Home = () => {
       return;
     const groupId = currentGroup._id;
     socket.emit("user:msg", { connectionId, groupId, msg: userMsg });
+    setUserMsg("");
   };
 
   const changeNewLogo = (e) => {
@@ -175,7 +192,9 @@ const Home = () => {
   return (
     <div className="home-container">
       <div
-        className={loader ? "loader-container show" : "loader-container hidden"}
+        className={
+          loader ? "loader-container loader-show" : "loader-container hidden"
+        }
       >
         <div className="loader"></div>
       </div>
@@ -185,42 +204,10 @@ const Home = () => {
             <NewGroupIcon />
             <div className="name">Group</div>
           </div>
-          <div
-            className={
-              openNewGroupAccordion ? "accordion show" : "accordion hidden"
-            }
-          >
-            <div className="options" onClick={handleCloseNewGroup}>
-              <CloseIcon />
-            </div>
-            <form>
-              <div className="logo">
-                <img src={preImage} />
-                <label htmlFor="image">
-                  <AddImageIcon />
-                </label>
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={changeNewLogo}
-                />
-              </div>
-              <label htmlFor="name">Room Name</label>
-              <input onChange={updateNewRoomName} id="name" type="text" />
-              <button
-                onClick={createNewRoom}
-                className="createRoom"
-                type="submit"
-              >
-                Create
-              </button>
-            </form>
-          </div>
         </div>
         {groups.map((val, i) => (
           <div
-            className="group"
+            className={selectedGroup === i ? "group selected-group" : "group"}
             key={i}
             onClick={() => handleGroupSelection(i)}
           >
@@ -241,6 +228,38 @@ const Home = () => {
         <SettingsIcon />
       </div>
       <div className="chat-container">
+        <div
+          className={
+            openNewGroupAccordion ? "accordion show" : "accordion hidden"
+          }
+        >
+          <div className="options" onClick={handleCloseNewGroup}>
+            <CloseIcon />
+          </div>
+          <form>
+            <div className="logo">
+              <img src={preImage} />
+              <label htmlFor="image">
+                <AddImageIcon />
+              </label>
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={changeNewLogo}
+              />
+            </div>
+            <label htmlFor="name">Room Name</label>
+            <input onChange={updateNewRoomName} id="name" type="text" />
+            <button
+              onClick={createNewRoom}
+              className="createRoom"
+              type="submit"
+            >
+              Create
+            </button>
+          </form>
+        </div>
         <div className="chats">
           {currentGroup !== null
             ? currentGroup.chat.map((message, index) => (
@@ -249,17 +268,30 @@ const Home = () => {
                     <div className="from">{message.from}</div>
                     <div className="time">{message.createdAt}</div>
                   </div>
-                  <div className="mg">{message.msg}</div>
+                  <div className="msg">{message.msg}</div>
                 </div>
               ))
             : ""}
+          <div className="invis" ref={invisDivRef}></div>
         </div>
         <div className="inputs">
+          {currentGroup !== null ? (
+            <div className="group-settings">
+              <SettingsIcon />
+            </div>
+          ) : (
+            ""
+          )}
           <input
             type="text"
             placeholder="..."
             value={userMsg}
             onChange={(e) => setUserMsg(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSendMsg(); // Call the send message function
+              }
+            }}
           />
           <button onClick={handleSendMsg}>
             <SendIcon />
