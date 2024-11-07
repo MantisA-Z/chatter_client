@@ -23,17 +23,20 @@ const VerifyContextProvider = ({ children }) => {
       }
 
       if (!token) {
-        console.log("token");
         navigate("/signin");
       } else {
-        const response = await sendReq("http://127.0.0.1:8000/api");
-        if (!response || !response.data) {
-          console.log("Server did not responded at /api");
-          return;
-        }
-        const { data, status } = response;
-        if (status === 401) {
-          navigate("/signin"); // Redirect if the token is invalid
+        try {
+          const response = await sendReq("http://127.0.0.1:8000/api");
+          if (!response || !response.status) {
+            console.log("Server did not responded at /api");
+            return;
+          }
+          const { data, status } = response;
+          if (status === 401) {
+            navigate("/signin"); // Redirect if the token is invalid
+          }
+        } catch (err) {
+          console.log(`Error while /api: ${err}`);
         }
       }
     };

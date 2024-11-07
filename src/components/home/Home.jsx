@@ -9,6 +9,7 @@ import { UseSocketContext } from "../../contexts/SocketContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 import { LuSendHorizonal as SendIcon } from "react-icons/lu";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const socket = UseSocketContext();
@@ -21,6 +22,7 @@ const Home = () => {
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
   const currentGroup = groups[selectedGroup] || null;
   console.log(currentGroup);
   const [userMsg, setUserMsg] = useState("");
@@ -160,21 +162,15 @@ const Home = () => {
 
       const { data, status } = response;
 
-      if (status === 422) {
-        console.log("Not enough info");
-        return;
-      } else if (status === 500) {
+      if (status === 500) {
         console.log("Internal server error");
-        return;
-      } else if (status !== 200) {
-        console.log("something went wrong while fetching user data");
         return;
       }
 
       socket.emit("user:create-new-room", {
         name: newRoomName,
         connectionId,
-        logoImgUrl: data.fileUrl,
+        logoImgUrl: data.fileUrl || "/defaultGroupLogo.jpg",
       });
 
       setLoader(false);
@@ -187,6 +183,11 @@ const Home = () => {
 
   const updateNewRoomName = (e) => {
     setNewRoomName(e.target.value);
+  };
+
+  const openGroupSettings = () => {
+    if (!currentGroup) return;
+    navigate(`/groupSettings/${currentGroup._id}`);
   };
 
   return (
@@ -276,7 +277,7 @@ const Home = () => {
         </div>
         <div className="inputs">
           {currentGroup !== null ? (
-            <div className="group-settings">
+            <div className="group-settings" onClick={openGroupSettings}>
               <SettingsIcon />
             </div>
           ) : (
