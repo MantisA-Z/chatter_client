@@ -23,7 +23,7 @@ const Home = () => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
-  const currentGroup = groups[selectedGroup] || null;
+  const currentGroup = selectedGroup !== null ? groups[selectedGroup] : null;
   console.log(currentGroup);
   const [userMsg, setUserMsg] = useState("");
   const sendReq = useFetchContext();
@@ -206,22 +206,26 @@ const Home = () => {
             <div className="name">Group</div>
           </div>
         </div>
-        {groups.map((val, i) => (
-          <div
-            className={selectedGroup === i ? "group selected-group" : "group"}
-            key={i}
-            onClick={() => handleGroupSelection(i)}
-          >
-            <div className="logo">
-              {val?.logo ? (
-                <img src={val.logo} alt="" />
-              ) : (
-                <img src="/defaultGroupLogo.jpg"></img>
-              )}
-            </div>
-            <p className="name">{val.name}</p>
-          </div>
-        ))}
+        {groups && groups.length > 0
+          ? groups.map((val, i) => (
+              <div
+                className={
+                  selectedGroup === i ? "group selected-group" : "group"
+                }
+                key={i}
+                onClick={() => handleGroupSelection(i)}
+              >
+                <div className="logo">
+                  {val?.logo ? (
+                    <img src={val.logo} alt="" />
+                  ) : (
+                    <img src="/defaultGroupLogo.jpg"></img>
+                  )}
+                </div>
+                <p className="name">{val.name}</p>
+              </div>
+            ))
+          : ""}
       </div>
       <div className="options">
         <ChatIcon />
