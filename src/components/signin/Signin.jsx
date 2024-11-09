@@ -3,6 +3,7 @@ import "./Signin.css";
 import { TbLogin2 as LoginIcon } from "react-icons/tb";
 import { BsChatRightDotsFill as ChatAppIcon } from "react-icons/bs";
 import { useFetchContext } from "../../contexts/FetchContext";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const [loginInputs, setLoginInputs] = useState({
@@ -14,6 +15,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState("Welcome");
   const sendReq = useFetchContext();
+  const navigate = useNavigate();
 
   const onInputValueChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +60,7 @@ const Signin = () => {
         }
 
         localStorage.setItem("token", data.JWT_TOKEN);
-        console.log(data);
+        navigate("/");
       } catch (err) {
         setLoading(false);
         setInfo("Internal server error");
@@ -67,6 +69,10 @@ const Signin = () => {
     } catch (err) {
       setLoading(false);
     }
+  };
+
+  const goToSignup = () => {
+    navigate("/signup");
   };
 
   return (
@@ -107,7 +113,9 @@ const Signin = () => {
           </div>
           <div className="loginIcon">
             <h2>Don't have an account signup</h2>
-            <LoginIcon />
+            <div className="icon" onClick={goToSignup}>
+              <LoginIcon />
+            </div>
           </div>
         </div>
       </div>

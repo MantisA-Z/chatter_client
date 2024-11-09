@@ -95,6 +95,7 @@
   & svg {
     color: var(--background-color-container-form);
     font-size: 2rem;
+    cursor: pointer;
   }
 }
 

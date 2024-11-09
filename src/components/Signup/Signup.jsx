@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import "./signup.css";
 import { TbLogin2 as LoginIcon } from "react-icons/tb";
 import { BsChatRightDotsFill as ChatAppIcon } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [loginInputs, setLoginInputs] = useState({
@@ -12,6 +13,7 @@ const Signup = () => {
   const [formValidity, setFormValidity] = useState(true);
   const [loading, setLoading] = useState(false);
   const infoRef = useRef(null);
+  const navigate = useNavigate();
 
   const onInputValueChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +66,10 @@ const Signup = () => {
     }
   };
 
+  const goToSignin = () => {
+    navigate("/signin");
+  };
+
   return (
     <div className="signup-container">
       <div className="form-container">
@@ -112,7 +118,9 @@ const Signup = () => {
           </div>
           <div className="loginIcon">
             <h2>Already have an account Login</h2>
-            <LoginIcon />
+            <div className="icon" onClick={goToSignin}>
+              <LoginIcon />
+            </div>
           </div>
         </div>
       </div>
