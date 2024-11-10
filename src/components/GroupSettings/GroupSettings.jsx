@@ -12,6 +12,8 @@ const GroupSettings = () => {
   const [groupName, setGroupName] = useState("");
   const [members, setMembers] = useState(null);
   const [preLogo, setPreLogo] = useState("/defaultGroupLogo.jpg");
+  const [accordianDisplay, setAccordianDisplay] = useState(false);
+  const [removedUsers, setRemovedUsers] = useState([]);
   const [edit, setEdit] = useState({});
   const { groupId } = useParams();
   const sendReq = useFetchContext();
@@ -63,6 +65,16 @@ const GroupSettings = () => {
     console.log(e.target.value);
   };
 
+  const showAccoridan = (e) => {
+    setAccordianDisplay((b) => !b);
+  };
+
+  const handleRemoveUser = (connectionId) => {
+    const removed = edit.remove || [];
+    setEdit((e) => ({ ...e, remove: [...removed, connectionId] }));
+    setRemovedUsers((r) => [...r, connectionId]);
+  };
+
   return groupData !== null ? (
     <div className="settings-container">
       <div className="basic-settings">
@@ -97,8 +109,19 @@ const GroupSettings = () => {
       </div>
       <div className="members-container" id="members-container">
         <label htmlFor="member-container">Members</label>
+        <div
+          className={
+            accordianDisplay
+              ? "accordian-invite show"
+              : "accordian-invite hidden"
+          }
+        >
+          <label htmlFor="connectionId">ConnectionId</label>
+          <input type="text" id="connectionId" />
+          <button>Invite</button>
+        </div>
         <div className="members">
-          <div className="invite-member">
+          <div className="invite-member" onClick={showAccoridan}>
             <div className="name">Invite New Members</div>
             <div className="icon">
               <InviteIcon />
@@ -106,9 +129,19 @@ const GroupSettings = () => {
           </div>
           {members && members.length > 0
             ? members.map((member, i) => (
-                <div className="member" key={i}>
+                <div
+                  className={
+                    removedUsers.includes(member.connectionId)
+                      ? "member removed"
+                      : "member"
+                  }
+                  key={i}
+                >
                   <div className="name">{member.name}</div>
-                  <div className="icon">
+                  <div
+                    className="icon"
+                    onClick={() => handleRemoveUser(member.connectionId)}
+                  >
                     <RemoveMemberIcon />
                   </div>
                 </div>
