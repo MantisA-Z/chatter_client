@@ -140,7 +140,6 @@ const Home = () => {
       };
       reader.readAsDataURL(file);
     }
-    console.log(file);
   };
 
   const createNewRoom = async (e) => {

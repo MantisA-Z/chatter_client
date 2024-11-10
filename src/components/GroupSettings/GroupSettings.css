@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 4rem;
   background-color: black;
   color: white;
 }
@@ -33,7 +33,7 @@
     height: 150px;
     background-color: rgb(33, 33, 33);
     border-radius: 50%;
-    border: 3px solid lime;
+    border: 3px solid rgb(47, 0, 255);
   }
 }
 
@@ -45,6 +45,15 @@
   height: 1.8rem;
   width: 1.8rem;
   cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+    transition-property: transform;
+  }
+
+  & input {
+    display: none;
+  }
 }
 
 .group-name {
@@ -52,6 +61,16 @@
   text-align: center;
   box-sizing: border-box;
   color: white;
+
+  & input {
+    background-color: black;
+    border: none;
+    width: 140px;
+    outline: none;
+    color: white;
+    text-align: center;
+    font-size: 2rem;
+  }
 }
 
 .edit-name {
@@ -70,14 +89,14 @@
 
 .members {
   width: 500px;
-  height: 200px;
+  height: 250px;
   background-color: rgb(19, 19, 19);
   padding: 20px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border: 3px solid lime;
+  border: 3px solid rgb(47, 0, 255);
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -116,19 +135,35 @@
     font-size: 1.6rem;
     color: red;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition-property: background-color color font-weight;
+
+    &:hover {
+      background-color: red;
+      color: white;
+      font-weight: bold;
+    }
   }
 }
 
 .invite-member {
   font-size: 1.5rem;
   display: flex;
-  background-color: rgb(65, 65, 65);
+  background-color: rgb(43, 43, 43);
   box-sizing: border-box;
   padding: 10px;
   text-align: center;
   border-radius: 8px;
   display: flex;
   align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(65, 65, 65);
+  }
 
   & .name {
     flex: 1;
@@ -141,4 +176,55 @@
     font-size: 1.6rem;
     color: red;
   }
+}
+
+.submit {
+  font-size: 2rem;
+  display: flex;
+  gap: 40%;
+  justify-content: center;
+}
+
+.submit .cancel {
+  cursor: pointer;
+  font-size: 2rem;
+  background-color: red;
+  color: white;
+  border: 2px solid red;
+  border-radius: 8px;
+  padding: 4px;
+  box-sizing: border-box;
+  font-weight: bold;
+
+  &:hover {
+    background-color: white;
+    color: red;
+    transform: scale(1.1);
+    transition-property: color background-color transform;
+  }
+}
+
+.submit .edit {
+  cursor: pointer;
+  font-size: 2rem;
+  background-color: lime;
+  color: white;
+  border: 2px solid lime;
+  border-radius: 8px;
+  font-weight: bold;
+
+  &:hover {
+    background-color: white;
+    color: lime;
+    transform: scale(1.1);
+    transition-property: color background-color transform;
+  }
+}
+
+.submit .cancel,
+.member .icon,
+.logo-edit input,
+.submit .edit {
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
 }

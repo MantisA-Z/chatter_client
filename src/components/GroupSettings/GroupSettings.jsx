@@ -3,13 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useFetchContext } from "../../contexts/FetchContext";
 import { MdOutlineModeEdit as EditIcon } from "react-icons/md";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
-import { IoMdClose as RemoveMemberIcon } from "react-icons/io";
+import { IoMdPricetag, IoMdClose as RemoveMemberIcon } from "react-icons/io";
 import { FcInvite as InviteIcon } from "react-icons/fc";
 import "./GroupSettings.css";
 
 const GroupSettings = () => {
   const [groupData, setGroupData] = useState(null);
+  const [groupName, setGroupName] = useState("");
   const [members, setMembers] = useState(null);
+  const [preLogo, setPreLogo] = useState("/defaultGroupLogo.jpg");
+  const [edit, setEdit] = useState({});
   const { groupId } = useParams();
   const sendReq = useFetchContext();
   const navigate = useNavigate();
@@ -32,6 +35,7 @@ const GroupSettings = () => {
         if (status === 200) {
           setGroupData(data.group);
           setMembers(data.members);
+          setGroupName(data.group.name);
           console.log(data.group, data.members);
         }
       } catch (err) {
@@ -40,16 +44,51 @@ const GroupSettings = () => {
     };
     checkAuth();
   }, [groupId, sendReq]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPreLogo(reader.result);
+        setEdit((e) => ({ ...e, logoFile: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleGroupNameChange = (e) => {
+    setEdit((edit) => ({ ...edit, name: e.target.value }));
+    setGroupName(e.target.value);
+    console.log(e.target.value);
+  };
+
   return groupData !== null ? (
     <div className="settings-container">
       <div className="basic-settings">
         <div className="logo-setting">
-          {groupData.logo ? <img src={groupData.logo} alt="" /> : ""}
+          {groupData.logo && preLogo === "/defaultGroupLogo.jpg" ? (
+            <img src={groupData.logo} alt="" />
+          ) : (
+            <img src={preLogo}></img>
+          )}
           <div className="edit-logo">
-            <AddImageIcon />
+            <input
+              type="file"
+              accept="image/*"
+              id="image-logo"
+              onChange={handleFileChange}
+            />
+            <label htmlFor="image-logo">
+              <AddImageIcon />
+            </label>
           </div>
           <div className="group-name">
-            <h2>{groupData.name}</h2>
+            <input
+              type="text"
+              value={groupName}
+              onChange={handleGroupNameChange}
+            />
             <div className="edit-name">
               <EditIcon />
             </div>
@@ -67,7 +106,7 @@ const GroupSettings = () => {
           </div>
           {members && members.length > 0
             ? members.map((member, i) => (
-                <div className="member">
+                <div className="member" key={i}>
                   <div className="name">{member.name}</div>
                   <div className="icon">
                     <RemoveMemberIcon />
@@ -100,6 +139,10 @@ const GroupSettings = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="submit">
+        <button className="cancel">cancel</button>
+        <button className="edit">submit</button>
       </div>
     </div>
   ) : (
