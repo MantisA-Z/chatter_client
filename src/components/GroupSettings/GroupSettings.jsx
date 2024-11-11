@@ -5,6 +5,10 @@ import { MdOutlineModeEdit as EditIcon } from "react-icons/md";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 import { IoMdPricetag, IoMdClose as RemoveMemberIcon } from "react-icons/io";
 import { FcInvite as InviteIcon } from "react-icons/fc";
+import {
+  SocketContextProvider,
+  UseSocketContext,
+} from "../../contexts/SocketContext";
 import "./GroupSettings.css";
 
 const GroupSettings = () => {
@@ -14,10 +18,12 @@ const GroupSettings = () => {
   const [preLogo, setPreLogo] = useState("/defaultGroupLogo.jpg");
   const [accordianDisplay, setAccordianDisplay] = useState(false);
   const [removedUsers, setRemovedUsers] = useState([]);
+  const [connectionIdToInvite, setConnectionIdToInvite] = useState("");
   const [edit, setEdit] = useState({});
   const { groupId } = useParams();
   const sendReq = useFetchContext();
   const navigate = useNavigate();
+  const socket = UseSocketContext();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -75,6 +81,20 @@ const GroupSettings = () => {
     setRemovedUsers((r) => [...r, connectionId]);
   };
 
+  const handleConnectionIdChange = (e) => {
+    setConnectionIdToInvite(e.target.value);
+  };
+
+  const inviteNewMember = () => {
+    if (connectionIdToInvite.trim() !== "" && socket) {
+      socket.emit("user:room-invite", {
+        connectionId: connectionIdToInvite,
+        group: groupData,
+      });
+      setAccordianDisplay(false);
+    }
+  };
+
   return groupData !== null ? (
     <div className="settings-container">
       <div className="basic-settings">
@@ -117,8 +137,13 @@ const GroupSettings = () => {
           }
         >
           <label htmlFor="connectionId">ConnectionId</label>
-          <input type="text" id="connectionId" />
-          <button>Invite</button>
+          <input
+            value={connectionIdToInvite}
+            onChange={handleConnectionIdChange}
+            type="text"
+            id="connectionId"
+          />
+          <button onClick={inviteNewMember}>Invite</button>
         </div>
         <div className="members">
           <div className="invite-member" onClick={showAccoridan}>

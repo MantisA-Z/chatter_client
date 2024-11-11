@@ -374,6 +374,23 @@
   font-size: 1.8rem;
 }
 
+.options .chat {
+  position: relative;
+  color: var(--input-color);
+  font-size: 1.8rem;
+
+  & .notification-icon {
+    position: absolute;
+    top: -18px;
+    right: -6px;
+
+    & svg {
+      font-size: 1.2rem;
+      color: red;
+    }
+  }
+}
+
 .accordion {
   transition-duration: var(--fast-transition);
   transition-timing-function: var(--transition-timing-function);
@@ -381,6 +398,11 @@
 
 .invis {
   display: hidden;
+}
+
+.connectionId {
+  color: white;
+  font-size: 1.2rem;
 }
 
 @media screen and (max-width: 1400px) {

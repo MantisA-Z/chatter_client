@@ -5,6 +5,7 @@ import { IoSettingsOutline as SettingsIcon } from "react-icons/io5";
 import { MdOutlineChatBubble as ChatIcon } from "react-icons/md";
 import { IoPersonAdd as AddFriendIcon } from "react-icons/io5";
 import { MdOutlineGroupAdd as NewGroupIcon } from "react-icons/md";
+import { IoNotifications as NotificationIcon } from "react-icons/io5";
 import { UseSocketContext } from "../../contexts/SocketContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
@@ -27,6 +28,7 @@ const Home = () => {
   console.log(currentGroup);
   const [userMsg, setUserMsg] = useState("");
   const sendReq = useFetchContext();
+  const [unread, setUnread] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -87,10 +89,15 @@ const Home = () => {
       );
     });
 
+    socket.on("server:group-invite", ({ group }) => {
+      setUnread(true);
+    });
+
     return () => {
       socket.off("server:user-connectionId");
       socket.off("server:created-new-room");
       socket.off("server:user-msg");
+      socket.off("server:group-invite");
     };
   }, [connectionId, socket]);
 
@@ -189,6 +196,11 @@ const Home = () => {
     navigate(`/groupSettings/${currentGroup._id}`);
   };
 
+  const goToMsg = () => {
+    setUnread(false);
+    navigate("/msg");
+  };
+
   return (
     <div className="home-container">
       <div
@@ -227,7 +239,17 @@ const Home = () => {
           : ""}
       </div>
       <div className="options">
-        <ChatIcon />
+        <div className="connectionId">ConnectionId: {connectionId}</div>
+        <div className="chat" onClick={goToMsg}>
+          <ChatIcon />
+          <div
+            className={
+              unread ? "notification-icon show" : "notification-icon hidden"
+            }
+          >
+            <NotificationIcon />
+          </div>
+        </div>
         <AddFriendIcon />
         <SettingsIcon />
       </div>
