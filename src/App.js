@@ -3,6 +3,7 @@ import "./App.css";
 import Signup from "./components/Signup/Signup";
 import Signin from "./components/signin/Signin";
 import Home from "./components/home/Home";
+import Messages from "./components/messages/Messages";
 import GroupSettings from "./components/GroupSettings/GroupSettings";
 import { FetchContextProvider } from "./contexts/FetchContext";
 import { SocketContextProvider } from "./contexts/SocketContext";
@@ -22,6 +23,7 @@ function App() {
                 path="/GroupSettings/:groupId"
                 element={<GroupSettings />}
               />
+              <Route path="/msg" element={<Messages />} />
             </Routes>
           </VerifyContextProvider>
         </Router>
