@@ -23,7 +23,7 @@ const Messages = () => {
 
     updateMessages();
   }, [sendReq]);
-  return <div>Messages</div>;
+  return <div className="messages"></div>;
 };
 
 export default Messages;

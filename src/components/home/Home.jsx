@@ -45,7 +45,7 @@ const Home = () => {
     socket.on("server:user-connectionId", ({ connectionId, groups }) => {
       setConnectionId(connectionId);
       setGroups(groups);
-      console.log(connectionId);
+      console.log("connectionID: ", connectionId);
     });
 
     socket.on("server:created-new-room", ({ groupInstance }) => {
