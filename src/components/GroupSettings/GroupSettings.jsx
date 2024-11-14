@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetchContext } from "../../contexts/FetchContext";
-import { MdOutlineModeEdit as EditIcon } from "react-icons/md";
+import {
+  MdOutlineModeEdit as EditIcon,
+  MdRemoveModerator,
+} from "react-icons/md";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 import { IoMdPricetag, IoMdClose as RemoveMemberIcon } from "react-icons/io";
 import { FcInvite as InviteIcon } from "react-icons/fc";
@@ -19,24 +22,32 @@ const GroupSettings = () => {
   const [accordianDisplay, setAccordianDisplay] = useState(false);
   const [removedUsers, setRemovedUsers] = useState([]);
   const [connectionIdToInvite, setConnectionIdToInvite] = useState("");
-  const [edit, setEdit] = useState({});
+  const [edit, setEdit] = useState({
+    name: null,
+    logoFile: null,
+    remove: null,
+  });
   const { groupId } = useParams();
   const sendReq = useFetchContext();
   const navigate = useNavigate();
   const socket = UseSocketContext();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
       try {
+        setLoading(true);
         const response = await sendReq(
           "http://127.0.0.1:8000/api/update-group",
           {},
           JSON.stringify({ groupId })
         );
+        setLoading(false);
         if (!response) {
           console.log("server not responding");
           navigate("/");
+          setLoading(false);
           return;
         }
         const { data, status } = response;
@@ -66,6 +77,7 @@ const GroupSettings = () => {
   };
 
   const handleGroupNameChange = (e) => {
+    if (e.target.value.length > 7) return;
     setEdit((edit) => ({ ...edit, name: e.target.value }));
     setGroupName(e.target.value);
     console.log(e.target.value);
@@ -95,8 +107,45 @@ const GroupSettings = () => {
     }
   };
 
+  const cancelEdit = () => {
+    setEdit({});
+    console.log(groupData.members[0].name);
+    setPreLogo(groupData.logo);
+    setGroupName(groupData.name);
+    setRemovedUsers([]);
+    setAccordianDisplay(false);
+  };
+
+  const submitEditedGroup = async () => {
+    try {
+      setLoading(true);
+      const response = await sendReq(
+        "http://127.0.0.1:8000/api/update-group",
+        {},
+        JSON.stringify({ groupId, edit })
+      );
+      setLoading(false);
+      if (!response) return;
+      const { data, status } = response;
+      if (status !== 200 || !data.group) return;
+      setGroupData(data.group);
+      setMembers(members);
+      setGroupName(data.group.name);
+    } catch (err) {
+      setLoading(false);
+      console.log(`Error occurred while sending the req, ${err}`);
+    }
+  };
+
   return groupData !== null ? (
     <div className="settings-container">
+      <div
+        className={
+          loading ? "loader-container loader-show" : "loader-container hidden"
+        }
+      >
+        <div className="loader"></div>
+      </div>
       <div className="basic-settings">
         <div className="logo-setting">
           {groupData.logo && preLogo === "/defaultGroupLogo.jpg" ? (
@@ -172,35 +221,15 @@ const GroupSettings = () => {
                 </div>
               ))
             : "No members"}
-          <div className="member">
-            <div className="name">Lakshya</div>
-            <div className="icon">
-              <RemoveMemberIcon />
-            </div>
-          </div>
-          <div className="member">
-            <div className="name">Arjun</div>
-            <div className="icon">
-              <RemoveMemberIcon />
-            </div>
-          </div>
-          <div className="member">
-            <div className="name">Karma</div>
-            <div className="icon">
-              <RemoveMemberIcon />
-            </div>
-          </div>
-          <div className="member">
-            <div className="name">Rexpiro</div>
-            <div className="icon">
-              <RemoveMemberIcon />
-            </div>
-          </div>
         </div>
       </div>
       <div className="submit">
-        <button className="cancel">cancel</button>
-        <button className="edit">submit</button>
+        <button className="cancel" onClick={cancelEdit}>
+          cancel
+        </button>
+        <button className="edit" onClick={submitEditedGroup}>
+          submit
+        </button>
       </div>
     </div>
   ) : (

@@ -188,6 +188,7 @@ const Home = () => {
   };
 
   const updateNewRoomName = (e) => {
+    if (e.target.value.length > 7) return;
     setNewRoomName(e.target.value);
   };
 
@@ -276,7 +277,12 @@ const Home = () => {
               />
             </div>
             <label htmlFor="name">Room Name</label>
-            <input onChange={updateNewRoomName} id="name" type="text" />
+            <input
+              onChange={updateNewRoomName}
+              id="name"
+              type="text"
+              value={newRoomName}
+            />
             <button
               onClick={createNewRoom}
               className="createRoom"
