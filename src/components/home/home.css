@@ -108,6 +108,26 @@
   }
 }
 
+.file-image {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #212121;
+  & img {
+    width: 500px;
+  }
+}
+
+.file-video {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #212121;
+  & video {
+    width: 500px;
+  }
+}
+
 .inputs {
   display: flex;
   align-items: center;

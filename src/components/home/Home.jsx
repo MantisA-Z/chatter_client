@@ -11,6 +11,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 import { LuSendHorizonal as SendIcon } from "react-icons/lu";
 import { Navigate, useNavigate } from "react-router-dom";
+import FileUpload from "../FileUpload/FileUpload";
 
 const Home = () => {
   const socket = UseSocketContext();
@@ -23,6 +24,7 @@ const Home = () => {
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loader, setLoader] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
   const currentGroup = selectedGroup !== null ? groups[selectedGroup] : null;
   console.log(currentGroup);
@@ -41,6 +43,24 @@ const Home = () => {
   useEffect(() => {
     if (!socket) return;
 
+    function formatDate(date) {
+      const options = { month: "2-digit", day: "2-digit", year: "numeric" };
+      const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+        date
+      );
+
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? "PM" : "AM";
+
+      hours = hours % 12;
+      hours = hours === 0 ? 12 : hours;
+
+      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+      return `${formattedDate} ${hours}:${formattedMinutes} ${ampm}`;
+    }
+
     //listeners
     socket.on("server:user-connectionId", ({ connectionId, groups }) => {
       setConnectionId(connectionId);
@@ -54,24 +74,25 @@ const Home = () => {
 
     socket.on("server:room-msg", ({ msg, from, groupId }) => {
       console.log("called");
-      function formatDate(date) {
-        const options = { month: "2-digit", day: "2-digit", year: "numeric" };
-        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-          date
-        );
+      const now = new Date();
+      const createdAt = formatDate(now);
 
-        let hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? "PM" : "AM";
+      // Find the target room by ID
+      const targetRoomIndex = groups.findIndex((val) => val._id === groupId);
+      if (targetRoomIndex === -1) return; // If no room is found, exit
 
-        hours = hours % 12;
-        hours = hours === 0 ? 12 : hours;
+      // Update the groups state
+      setGroups((prevG) =>
+        prevG.map((group, i) =>
+          i === targetRoomIndex
+            ? { ...group, chat: [...group.chat, { from, msg, createdAt }] }
+            : group
+        )
+      );
+    });
 
-        const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-
-        return `${formattedDate} ${hours}:${formattedMinutes} ${ampm}`;
-      }
-
+    socket.on("server:file-msg", ({ from, msg, groupId }) => {
+      console.log(msg);
       const now = new Date();
       const createdAt = formatDate(now);
 
@@ -98,6 +119,7 @@ const Home = () => {
       socket.off("server:created-new-room");
       socket.off("server:user-msg");
       socket.off("server:group-invite");
+      socket.off("server:file-msg");
     };
   }, [connectionId, socket]);
 
@@ -133,7 +155,11 @@ const Home = () => {
     if (userMsg.trim() === "" || groups.length === 0 || currentGroup === null)
       return;
     const groupId = currentGroup._id;
-    socket.emit("user:msg", { connectionId, groupId, msg: userMsg });
+    socket.emit("user:msg", {
+      connectionId,
+      groupId,
+      msg: { type: "text", text: userMsg },
+    });
     setUserMsg("");
   };
 
@@ -300,7 +326,26 @@ const Home = () => {
                     <div className="from">{message.from}</div>
                     <div className="time">{message.createdAt}</div>
                   </div>
-                  <div className="msg">{message.msg}</div>
+                  {message.msg.type === "text" ? (
+                    <div className="msg">{message.msg.text}</div>
+                  ) : message.msg.type === "image" ? (
+                    <div className="file-image">
+                      <img src={message.msg.image} alt="" />
+                      <div className="msg">{message.msg.text}</div>
+                    </div>
+                  ) : message.msg.type === "video" ? (
+                    <div className="file-video">
+                      <video src={message.msg.video} controls />
+                      <div className="msg">{message.msg.text}</div>
+                    </div>
+                  ) : message.msg.type === "document" ? (
+                    <div className="file-document">
+                      <div className="url-to-file">{message.msg.document}</div>
+                      <div className="msg">{message.msg.text}</div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               ))
             : ""}
@@ -314,6 +359,13 @@ const Home = () => {
           ) : (
             ""
           )}
+          <FileUpload
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
+            socket={socket}
+            selectedGroup={currentGroup}
+            connectionId={connectionId}
+          />
           <input
             type="text"
             placeholder="..."
