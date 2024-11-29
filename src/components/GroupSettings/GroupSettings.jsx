@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetchContext } from "../../contexts/FetchContext";
 import {
@@ -22,6 +22,7 @@ const GroupSettings = () => {
   const [accordianDisplay, setAccordianDisplay] = useState(false);
   const [removedUsers, setRemovedUsers] = useState([]);
   const [connectionIdToInvite, setConnectionIdToInvite] = useState("");
+  const inputRef = useRef(null);
   const [edit, setEdit] = useState({
     name: null,
     logoFile: null,
@@ -137,6 +138,10 @@ const GroupSettings = () => {
     }
   };
 
+  const changeFocusToInput = () => {
+    inputRef.current.focus();
+  };
+
   return groupData !== null ? (
     <div className="settings-container">
       <div
@@ -166,11 +171,12 @@ const GroupSettings = () => {
           </div>
           <div className="group-name">
             <input
+              ref={inputRef}
               type="text"
               value={groupName}
               onChange={handleGroupNameChange}
             />
-            <div className="edit-name">
+            <div className="edit-name" onClick={changeFocusToInput}>
               <EditIcon />
             </div>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaFile as FileUploadIcon } from "react-icons/fa6";
+import { IoDocumentText as DocumentIcon } from "react-icons/io5";
 import { useFetchContext } from "../../contexts/FetchContext";
 import "./fileUpload.css";
 
@@ -104,6 +105,43 @@ const FileUpload = ({
             </button>
           </div>
         )}
+        {fileType.startsWith("audio") && (
+          <div className="audio-preview">
+            {console.log(filePreviewUrl)}
+            <div className="name">{fileName}</div>
+            <input
+              className="captions"
+              value={captions}
+              onChange={handleInputChange}
+              type="text"
+              placeholder="Captions"
+            />
+            <button className="sendFile" onClick={sendFileMsg}>
+              Send
+            </button>
+          </div>
+        )}
+        {!fileType.startsWith("image") &&
+          !fileType.startsWith("video") &&
+          !fileType.startsWith("audio") &&
+          fileType !== "" && (
+            <div className="document-preview">
+              <div className="name">{fileName}</div>
+              <div className="document">
+                <DocumentIcon />
+              </div>
+              <input
+                className="captions"
+                value={captions}
+                onChange={handleInputChange}
+                type="text"
+                placeholder="Captions"
+              />
+              <button className="sendFile" onClick={sendFileMsg}>
+                Send
+              </button>
+            </div>
+          )}
       </div>
       <label htmlFor="file-upload" className="label-file-upload">
         <FileUploadIcon />

@@ -60,6 +60,7 @@
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .chats::-webkit-scrollbar {
@@ -125,6 +126,29 @@
   background-color: #212121;
   & video {
     width: 500px;
+  }
+}
+
+.file-document {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #212121;
+  & .url-to-file {
+    cursor: pointer;
+  }
+  & svg {
+    font-size: 250px;
+  }
+}
+
+.file-audio {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #212121;
+  & .url-to-file {
+    cursor: pointer;
   }
 }
 
@@ -415,11 +439,6 @@
   transition-duration: var(--fast-transition);
   transition-timing-function: var(--transition-timing-function);
 }
-
-.invis {
-  display: hidden;
-}
-
 .connectionId {
   color: white;
   font-size: 1.2rem;

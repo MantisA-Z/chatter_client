@@ -100,3 +100,94 @@
     }
   }
 }
+
+.audio-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 10px;
+  background-color: rgb(40, 40, 40);
+  padding: 1.5rem;
+  border-radius: 20px;
+  position: absolute;
+  top: -350px;
+  width: 300px;
+  height: 300px;
+
+  & audio {
+    background-color: white;
+    font-size: 2rem;
+    width: 300px;
+    height: 200px;
+  }
+
+  & .name {
+    flex: 1;
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  & .captions {
+    display: block;
+    font-size: 1rem;
+    width: 300px;
+    padding: 4px;
+    border: 2px solid white;
+  }
+
+  & .sendFile {
+    cursor: pointer;
+    width: 100px;
+    border-radius: 10px;
+    border: 2px solid white;
+
+    &:hover {
+      background-color: black;
+    }
+  }
+}
+
+.document-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 10px;
+  background-color: rgb(40, 40, 40);
+  padding: 1rem;
+  border-radius: 20px;
+  position: absolute;
+  top: -350px;
+  width: 300px;
+  height: 300px;
+
+  & svg {
+    width: 300px;
+    height: 150px;
+  }
+
+  & .name {
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  & .captions {
+    display: block;
+    font-size: 1rem;
+    width: 300px;
+    padding: 4px;
+    border: 2px solid white;
+  }
+
+  & .sendFile {
+    cursor: pointer;
+    width: 100px;
+    border-radius: 10px;
+    border: 2px solid white;
+
+    &:hover {
+      background-color: black;
+    }
+  }
+}

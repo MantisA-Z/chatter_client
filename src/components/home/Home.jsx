@@ -10,6 +10,7 @@ import { UseSocketContext } from "../../contexts/SocketContext";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import { RiImageAddLine as AddImageIcon } from "react-icons/ri";
 import { LuSendHorizonal as SendIcon } from "react-icons/lu";
+import { IoDocumentText as DocumentIcon } from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 import FileUpload from "../FileUpload/FileUpload";
 
@@ -21,6 +22,7 @@ const Home = () => {
   const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
   const invisDivRef = useRef(null);
+  const scrollRef = useRef(null);
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -65,6 +67,7 @@ const Home = () => {
     socket.on("server:user-connectionId", ({ connectionId, groups }) => {
       setConnectionId(connectionId);
       setGroups(groups);
+      setSelectedGroup(groups.length > 0 ? 0 : null);
       console.log("connectionID: ", connectionId);
     });
 
@@ -108,6 +111,9 @@ const Home = () => {
             : group
         )
       );
+      setTimeout(() => {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }, 1000); // 0 ms delay to allow DOM update
     });
 
     socket.on("server:group-invite", ({ group }) => {
@@ -125,21 +131,23 @@ const Home = () => {
 
   useEffect(() => {
     if (currentGroup?.chat.length) {
-      invisDivRef.current?.scrollIntoView({ behavior: "smooth" });
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [currentGroup?.chat.length]);
 
   useEffect(() => {
-    if (!invisDivRef.current) return;
-    invisDivRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-    });
-  }, [groups]); // Adding `groups` to watch all updates
+    if (scrollRef.current) {
+      // Delay the scroll action to ensure the layout is updated
+      setTimeout(() => {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }, 100); // 0 ms delay to allow DOM update
+    }
+  }, [groups, selectedGroup, currentGroup?.chat]);
 
   const handleGroupSelection = (i) => {
     setSelectedGroup(i);
-    console.log(groups, i);
+    console.log(selectedGroup, i);
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   };
 
   const handleNewGroup = () => {
@@ -226,6 +234,10 @@ const Home = () => {
   const goToMsg = () => {
     setUnread(false);
     navigate("/msg");
+  };
+
+  const openDoc = (url) => {
+    window.location.href = url;
   };
 
   return (
@@ -318,7 +330,7 @@ const Home = () => {
             </button>
           </form>
         </div>
-        <div className="chats">
+        <div className="chats" ref={scrollRef}>
           {currentGroup !== null
             ? currentGroup.chat.map((message, index) => (
                 <div className="chat" key={index}>
@@ -338,9 +350,19 @@ const Home = () => {
                       <video src={message.msg.video} controls />
                       <div className="msg">{message.msg.text}</div>
                     </div>
+                  ) : message.msg.type === "audio" ? (
+                    <div className="file-audio">
+                      <audio controls src={message.msg.audio}></audio>
+                      <div className="msg">{message.msg.text}</div>
+                    </div>
                   ) : message.msg.type === "document" ? (
                     <div className="file-document">
-                      <div className="url-to-file">{message.msg.document}</div>
+                      <div
+                        className="url-to-file"
+                        onClick={() => openDoc(message.msg.document)}
+                      >
+                        <DocumentIcon />
+                      </div>
                       <div className="msg">{message.msg.text}</div>
                     </div>
                   ) : (
@@ -349,7 +371,6 @@ const Home = () => {
                 </div>
               ))
             : ""}
-          <div className="invis" ref={invisDivRef}></div>
         </div>
         <div className="inputs">
           {currentGroup !== null ? (
