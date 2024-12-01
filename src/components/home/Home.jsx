@@ -13,6 +13,7 @@ import { LuSendHorizonal as SendIcon } from "react-icons/lu";
 import { IoDocumentText as DocumentIcon } from "react-icons/io5";
 import { Navigate, useNavigate } from "react-router-dom";
 import FileUpload from "../FileUpload/FileUpload";
+import CallIcon from "../Call/Call";
 
 const Home = () => {
   const socket = UseSocketContext();
@@ -113,7 +114,7 @@ const Home = () => {
       );
       setTimeout(() => {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-      }, 1000); // 0 ms delay to allow DOM update
+      }, 1000); // 1000 ms delay to allow DOM update
     });
 
     socket.on("server:group-invite", ({ group }) => {
@@ -214,6 +215,7 @@ const Home = () => {
       });
 
       setLoader(false);
+      setOpenNewGroupAccordion((b) => !b);
     } catch (err) {
       console.log(err);
       setLoader(false);
@@ -279,6 +281,11 @@ const Home = () => {
       </div>
       <div className="options">
         <div className="connectionId">ConnectionId: {connectionId}</div>
+        <CallIcon
+          socket={socket}
+          connectionId={connectionId}
+          group={currentGroup}
+        />
         <div className="chat" onClick={goToMsg}>
           <ChatIcon />
           <div
