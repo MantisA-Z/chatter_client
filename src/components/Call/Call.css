@@ -4,7 +4,8 @@
 
 .icon .incoming-call {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
   border-radius: 8px;
   z-index: 2;
   position: absolute;
@@ -12,7 +13,7 @@
   right: 100px;
   background-color: white;
   width: 500px;
-  height: 50px;
+  padding: 10px;
 
   & .group-name {
     height: 100%;
@@ -23,4 +24,24 @@
     font-weight: bold;
     color: black;
   }
+}
+
+.receive-call svg,
+.reject-call svg {
+  cursor: pointer;
+  font-size: 2rem;
+  padding: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.reject-call svg {
+  color: red;
+  background-color: rgb(255, 132, 132);
+}
+
+.receive-call svg {
+  color: lime;
+  background-color: rgb(189, 255, 189);
 }

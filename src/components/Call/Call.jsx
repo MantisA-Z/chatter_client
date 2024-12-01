@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Call.css";
 import { IoCall as CallIcon } from "react-icons/io5";
 import { MdWifiCalling3 as JoinCallIcon } from "react-icons/md";
+import { MdCallEnd as RejectCalIcon } from "react-icons/md";
 
 const Call = ({ socket, connectionId, group }) => {
   const [incomingCall, setIncomingCall] = useState(false);
@@ -30,6 +31,12 @@ const Call = ({ socket, connectionId, group }) => {
       <div
         className={incomingCall ? "incoming-call show" : "incoming-call hidden"}
       >
+        <div className="receive-call">
+          <JoinCallIcon />
+        </div>
+        <div className="reject-call">
+          <RejectCalIcon />
+        </div>
         <div className="group-name">call from: {group?.name}</div>
       </div>
     </div>
