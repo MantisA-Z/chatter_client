@@ -14,6 +14,8 @@
   background-color: white;
   width: 500px;
   padding: 10px;
+  transform: translate(-1000px);
+  transition-property: transform;
 
   & .group-name {
     height: 100%;
@@ -24,6 +26,10 @@
     font-weight: bold;
     color: black;
   }
+}
+
+.show {
+  transform: translate(0px);
 }
 
 .receive-call svg,
@@ -44,4 +50,9 @@
 .receive-call svg {
   color: lime;
   background-color: rgb(189, 255, 189);
+}
+
+.incoming-call {
+  transition-duration: 0.4s;
+  transition-timing-function: ease-in-out;
 }
