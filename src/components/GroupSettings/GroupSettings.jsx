@@ -121,8 +121,9 @@ const GroupSettings = () => {
   const submitEditedGroup = async () => {
     try {
       setLoading(true);
+      const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
       const response = await sendReq(
-        "http://127.0.0.1:8000/api/update-group",
+        `${REACT_APP_SERVER_URL}/update-group`,
         {},
         JSON.stringify({ groupId, edit })
       );
