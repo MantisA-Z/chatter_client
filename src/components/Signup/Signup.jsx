@@ -45,7 +45,8 @@ const Signup = () => {
     try {
       infoRef.current.value = "";
       setLoading(true);
-      const response = await fetch("http://localhost:8000/signup", {
+      const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
+      const response = await fetch(`${REACT_APP_SERVER_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
