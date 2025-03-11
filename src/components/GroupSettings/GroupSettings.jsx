@@ -41,7 +41,7 @@ const GroupSettings = () => {
         setLoading(true);
         const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
         const response = await sendReq(
-          `${REACT_APP_SERVER_URL}/signup`,
+          `${REACT_APP_SERVER_URL}/update-group`,
           {},
           JSON.stringify({ groupId })
         );
