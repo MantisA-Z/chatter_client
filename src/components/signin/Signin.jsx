@@ -47,7 +47,7 @@ const Signin = () => {
       try {
         const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
         const { data, status } = await sendReq(
-          "http://localhost:8000/signin",
+          `${REACT_APP_SERVER_URL}/signin`,
           {},
           JSON.stringify(loginInputs)
         );
