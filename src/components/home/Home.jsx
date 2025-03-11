@@ -190,8 +190,9 @@ const Home = () => {
     setLoader(true);
 
     try {
+      const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
       const response = await sendReq(
-        "http://127.0.0.1:8000/upload",
+        `${REACT_APP_SERVER_URL}/upload`,
         {},
         JSON.stringify({ file: logoFile })
       );
