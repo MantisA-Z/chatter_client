@@ -26,7 +26,8 @@ const VerifyContextProvider = ({ children }) => {
         navigate("/signin");
       } else {
         try {
-          const response = await sendReq("http://127.0.0.1:8000/api");
+          const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
+          const response = await sendReq(`${REACT_APP_SERVER_URL}/api`);
           if (!response || !response.status) {
             console.log("Server did not responded at /api");
             return;
