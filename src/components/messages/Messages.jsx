@@ -9,8 +9,9 @@ const Messages = () => {
   useEffect(() => {
     const updateMessages = async () => {
       try {
+        const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
         const { data, status } = await sendReq(
-          "http://127.0.0.1:8000/api/msg",
+          `${REACT_APP_SERVER_URL}/api/msg`,
           {},
           null,
           "GET"
