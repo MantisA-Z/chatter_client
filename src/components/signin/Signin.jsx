@@ -45,6 +45,7 @@ const Signin = () => {
       setInfo("welcome");
       setLoading(true);
       try {
+        const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
         const { data, status } = await sendReq(
           "http://localhost:8000/signin",
           {},
