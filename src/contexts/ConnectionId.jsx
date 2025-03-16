@@ -12,7 +12,7 @@ const ConnectionIdContextProvider = ({ children }) => {
   useEffect(() => {
     if (!socket) return;
     const token = localStorage.getItem("token");
-
+    if (!token) return;
     socket.emit("user:connection-id", { token });
 
     const handleConnectionId = ({ connectionId }) => {

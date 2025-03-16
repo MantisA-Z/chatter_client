@@ -56,11 +56,12 @@ const InCall = () => {
   }, [streams]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !localStream) return;
 
     socket.on("user:joined-call", ({ userConnectionId }) => {
       if (userConnectionId !== connectionId) {
         createOffer(userConnectionId);
+        console.log(userConnectionId);
       }
     });
 
@@ -79,7 +80,7 @@ const InCall = () => {
         peerConnections.current[from].addIceCandidate(candidate);
       }
     });
-  }, [socket]);
+  }, [socket, localStream]);
 
   const createOffer = async (userId) => {
     const peer = new RTCPeerConnection();
