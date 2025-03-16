@@ -22,7 +22,6 @@ const Home = () => {
   const [connectionId, setConnectionId] = useState(null);
   const [newRoomName, setNewRoomName] = useState("");
   const [groups, setGroups] = useState([]);
-  const invisDivRef = useRef(null);
   const scrollRef = useRef(null);
   const [logoFile, setLogoFile] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -68,7 +67,7 @@ const Home = () => {
     socket.on("server:user-connectionId", ({ connectionId, groups }) => {
       setConnectionId(connectionId);
       setGroups(groups);
-      setSelectedGroup(groups.length > 0 ? 0 : null);
+      setSelectedGroup(groups?.length > 0 ? 0 : null);
       console.log("connectionID: ", connectionId);
     });
 
