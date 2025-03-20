@@ -58,11 +58,12 @@ const InCall = () => {
   useEffect(() => {
     if (!socket || !localStream) return;
 
-    socket.on("user:joined-call", ({ userConnectionId }) => {
-      if (userConnectionId !== connectionId) {
-        createOffer(userConnectionId);
-        console.log(userConnectionId);
+    socket.on("user:joined-call", ({ socketId }) => {
+      console.log(socketId);
+      if (socketId !== connectionId) {
+        console.log(socketId);
       }
+      createOffer(socketId);
     });
 
     socket.on("offer", async ({ offer, from }) => {
@@ -100,10 +101,32 @@ const InCall = () => {
     };
 
     peer.ontrack = (event) => {
-      setStreams((prevStreams) => [
-        ...prevStreams,
-        { userId, stream: event.streams[0] },
-      ]);
+      setStreams((prevStreams) => {
+        // Check if a stream from 'from' userId already exists
+        const streamExists = prevStreams.some(
+          (stream) => stream.userId === userId
+        );
+
+        // If the stream already exists, return the current state (no duplicates)
+        if (streamExists) return prevStreams;
+
+        // Otherwise, add the new stream
+        return [...prevStreams, { userId, stream: event.streams[0] }];
+      });
+    };
+
+    peer.onconnectionstatechange = () => {
+      console.log("Connection state changed:", peer.connectionState);
+
+      if (
+        peer.connectionState === "disconnected" ||
+        peer.connectionState === "failed"
+      ) {
+        const updatedStreams = streams.filter(
+          (value, i) => value.userId !== userId
+        );
+        setStreams(updatedStreams);
+      }
     };
 
     const offer = await peer.createOffer();
@@ -126,10 +149,32 @@ const InCall = () => {
     };
 
     peer.ontrack = (event) => {
-      setStreams((prevStreams) => [
-        ...prevStreams,
-        { userId: from, stream: event.streams[0] },
-      ]);
+      setStreams((prevStreams) => {
+        // Check if a stream from 'from' userId already exists
+        const streamExists = prevStreams.some(
+          (stream) => stream.userId === from
+        );
+
+        // If the stream already exists, return the current state (no duplicates)
+        if (streamExists) return prevStreams;
+
+        // Otherwise, add the new stream
+        return [...prevStreams, { userId: from, stream: event.streams[0] }];
+      });
+    };
+
+    peer.onconnectionstatechange = () => {
+      console.log("Connection state changed:", peer.connectionState);
+
+      if (
+        peer.connectionState === "disconnected" ||
+        peer.connectionState === "failed"
+      ) {
+        const updatedStreams = streams.filter(
+          (value, i) => value.userId !== from
+        );
+        setStreams(updatedStreams);
+      }
     };
 
     await peer.setRemoteDescription(offer);
@@ -146,6 +191,7 @@ const InCall = () => {
         return newMutedState;
       });
     }
+    console.log(streams);
   };
 
   const toggleVideo = () => {
@@ -160,7 +206,12 @@ const InCall = () => {
       <div className="userVideosContainer">
         <div className="userVideos" ref={userVideosRef}>
           <div className="videoBox">
-            <video ref={localVideoRef} autoPlay muted></video>
+            <video
+              className="myVideo"
+              ref={localVideoRef}
+              autoPlay
+              muted
+            ></video>
             {isMuted && (
               <div className="userMutedIcon">
                 <MutedIcon />
@@ -175,6 +226,11 @@ const InCall = () => {
                   if (video) video.srcObject = stream;
                 }}
               ></video>
+              {!stream.getAudioTracks()[0].enabled && (
+                <div className="userMutedIcon">
+                  <MutedIcon />
+                </div>
+              )}
             </div>
           ))}
         </div>
